@@ -11,6 +11,7 @@
 > (1) 爬取第一个链接： 
 > getTitle.py getTitleURL.py getAllMes.py
 > 爬取标题+时间+内容耗时较长 且只能爬取公告内容在article标签的页面（爬到标题为 “币安合约将上线ETHUSD次季1225交割合约”）
+
 > (2) 爬取第二个链接: 
 > getMessPost.py
 7. 了解学习scrapy框架
