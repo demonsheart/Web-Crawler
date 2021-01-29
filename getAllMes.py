@@ -1,5 +1,5 @@
 # 如何请求网页 https://www.binance.com/cn/support/announcement/c-48, 提取网页信息（如正则表达式，css选择器, xpath）
-# 提取title + URL + time + article 写入message.txt
+# 提取title + URL + time + article 写入getAllMes.txt
 
 import requests
 import re

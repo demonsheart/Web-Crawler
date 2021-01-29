@@ -1,5 +1,5 @@
 # 如何请求网页 https://www.binance.com/cn/support/announcement/c-48, 提取网页信息（如正则表达式，css选择器, xpath）
-# 请求所有标题 并写入titles.txt文件
+# 请求所有标题 并写入getTitle.txt文件
 
 import requests
 import re

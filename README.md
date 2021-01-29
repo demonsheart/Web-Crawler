@@ -8,8 +8,11 @@
 5. 如何请求网页 https://www.binance.com/cn/support/announcement/aec178a59f824162ab77a17a5d0838a5, 提取网页信息（如正则表达式，css选择器, xpath）
 > getMessage.py
 6. 爬取公告列表 https://www.binance.com/cn/support/announcement/c-48, https://help.bitz.ai/section/100000019 (分析页面，构造http请求)
+> (1) 爬取第一个链接： 
 > getTitle.py getTitleURL.py getAllMes.py
 > 爬取标题+时间+内容耗时较长 且只能爬取公告内容在article标签的页面（爬到标题为 “币安合约将上线ETHUSD次季1225交割合约”）
+> (2) 爬取第二个链接: 
+> getMessPost.py
 7. 了解学习scrapy框架
 
 备注：
