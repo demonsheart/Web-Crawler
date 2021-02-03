@@ -15,6 +15,7 @@
 > (2) 爬取第二个链接: 
 > getMessPost.py
 7. 了解学习scrapy框架
+> ITcast 以及 Tencent目录为两个案例 加入一点自己的东西
 
 备注：
 * 梯子自备
