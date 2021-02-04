@@ -3,18 +3,29 @@
 
 import requests
 import re
+import math
+import sys
 from bs4 import BeautifulSoup
 
 
 def getArt(URL):
     text = session.get(URL).text
     soup = BeautifulSoup(text, features="html.parser")
-    art = (soup.select('article')[0]).text
-    time = (soup.select('.css-f1q2g4')[0]).text
-    article = re.match(r'.*[0-9]{4}年[0-9]{1,2}月[0-9]{1,2}日', art)
-    return article.group(), time
+    flag = True
+
+    L = soup.select('article')
+    if (len(L) != 0):
+        art = (L[0]).text
+        time = (soup.select('.css-f1q2g4')[0]).text
+        article = re.match(r'.*[0-9]{4}年[0-9]{1,2}月[0-9]{1,2}日', art).group()
+    else:
+        time = ''
+        article = ''
+        flag = False
+    return article, time, flag
 
 
+# 设置代理
 proxies = {
     "http": "socks5://127.0.0.1:10808",
     "https": "socks5://127.0.0.1:10808",
@@ -24,33 +35,56 @@ session = requests.Session()
 
 session.proxies.update(proxies)
 
-urls = [
-    'https://www.binance.com/gateway-api/v1/public/cms/article/catalog/list/query?catalogId=48&pageNo={}&pageSize=15'.format(
-        str(i)) for i in range(1, 44)]
-
 headers = {
-    'accept': '*/*',
-    'accept-encoding': 'gzip, deflate, br',
-    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-    'content-type': 'application/json',
+    'accept':
+    '*/*',
+    'accept-encoding':
+    'gzip, deflate, br',
+    'accept-language':
+    'zh-CN,zh;q=0.9,en;q=0.8',
+    'content-type':
+    'application/json',
     'cookie':
-        '_ga=GA1.2.1159601895.1611395450; bnc-uuid=432bf6ed-1d55-48bc-bede-9cfba8d839a5; userPreferredCurrency=USD_USD; _gid=GA1.2.1886009461.1611644862; source=referral; campaign=www.binance.com; BNC_FV_KEY=311ae6c135e0ab928b45fd52dac72305bca75e1b; BNC_FV_KEY_EXPIRE=1611821195280',
-    'csrftoken': 'd41d8cd98f00b204e9800998ecf8427e',
-    'lang': 'cn',
-    'referer': 'https://www.binance.com/cn/support/announcement/c-48',
+    '_ga=GA1.2.1159601895.1611395450; bnc-uuid=432bf6ed-1d55-48bc-bede-9cfba8d839a5; userPreferredCurrency=USD_USD; _gid=GA1.2.1886009461.1611644862; source=referral; campaign=www.binance.com; BNC_FV_KEY=311ae6c135e0ab928b45fd52dac72305bca75e1b; BNC_FV_KEY_EXPIRE=1611821195280',
+    'csrftoken':
+    'd41d8cd98f00b204e9800998ecf8427e',
+    'lang':
+    'cn',
+    'referer':
+    'https://www.binance.com/cn/support/announcement/c-48',
     'user-agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
 }
 
+# 获取页数
+tmpURL = 'https://www.binance.com/gateway-api/v1/public/cms/article/catalog/list/query?catalogId=48&pageNo=1&pageSize=15'
+
+tmpRe = session.get(tmpURL, headers=headers)
+
+total = tmpRe.json()['data']['total']
+
+page = math.ceil(total / 15)
+
+# 生成url
+urls = [
+    'https://www.binance.com/gateway-api/v1/public/cms/article/catalog/list/query?catalogId=48&pageNo={}&pageSize=15'
+    .format(str(i)) for i in range(1, page + 1)
+]
+
 preURL = 'https://www.binance.com/cn/support/announcement/'
-for url in urls:
-    r = session.get(url, headers=headers)
-    r.encoding = 'utf-8'
-    js = r.json()
-    with open('message.txt', 'ab') as fd:
+
+with open('getAllMes.txt', 'wb') as fd:
+    for url in urls:
+        r = session.get(url, headers=headers)
+        r.encoding = 'utf-8'
+        js = r.json()
         for x in js['data']['articles']:
             artURL = preURL + x['code']
-            fd.write((x['title'] + '    ' + artURL + '\n').encode(encoding='utf-8'))
-            art, time = getArt(artURL)
-            fd.write((time + '\n' + art + '\n\n').encode(encoding='utf-8'))
-
+            art, time, flag = getArt(artURL)
+            if (flag):
+                fd.write((x['title'] + '    ' + artURL +
+                          '\n').encode(encoding='utf-8'))
+                fd.write((time + '\n' + art + '\n\n').encode(encoding='utf-8'))
+            else:
+                print('剩下的文章不再爬取，因为DOM文档树发生了改变。')
+                sys.exit(0)
