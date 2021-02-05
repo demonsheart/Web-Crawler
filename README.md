@@ -16,6 +16,7 @@
 > getMessPost.py
 7. 了解学习scrapy框架
 > ITcast 以及 Tencent目录为两个案例 加入一点自己的东西
+> Douyu 为下载图片案例
 
 备注：
 * 梯子自备
